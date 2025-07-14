@@ -159,7 +159,7 @@ If you find a bug, please open an issue on GitHub with:
 - [ ] PWA features (offline support)
 - [ ] Print functionality
 
-## 👨 Author
+## Author
 
 Created with ❤️ by Dimvalas.
 
