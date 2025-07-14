@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VNotes - Simple & Elegant Note Taking App</title>
+    <meta name="description" content="VNotes is a minimalist, secure note-taking web application with dark/light themes. Create, edit, and organize your notes with ease.">
+    <meta name="keywords" content="notes, notepad, productivity, dark theme, light theme, web app">
+    <meta name="author" content="VNotes">
+    <meta property="og:title" content="VNotes - Simple & Elegant Note Taking App">
+    <meta property="og:description" content="A minimalist, secure note-taking web application with dark/light themes.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://yourusername.github.io/vnotes/">
+    <meta property="og:image" content="https://yourusername.github.io/vnotes/assets/notes.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="VNotes - Simple & Elegant Note Taking App">
+    <meta name="twitter:description" content="A minimalist, secure note-taking web application with dark/light themes.">
+    <meta name="twitter:image" content="https://yourusername.github.io/vnotes/assets/notes.png">
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="app">
+        <header class="header">
+            <a href="index.html">
+                <img src="assets/notes.png" alt="VNotes logo" class="notes-image">
+            </a>
+            <nav class="navigation">
+                <a href="index.html" class="navigation-link">Home</a>
+                <a href="about.html" class="navigation-link">About</a>
+                <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme" role="switch"></button>
+            </nav>
+        </header>
+        <main class="main">
+            <section class="hero">
+                <p class="hero-title">
+                    The best webapp for taking notes.
+                </p>
+            </section>
+            
+            <section class="notes-section">
+                <div class="notes-header">
+                    <h2 class="section-title">Your Notes</h2>
+                    <button class="btn" id="add-note-btn">Add Note</button>
+                </div>
+                
+                <div class="notes-grid" id="notes-grid">
+                </div>
+                
+                <div class="empty-state" id="empty-state">
+                    <h3>No notes yet</h3>
+                    <p>Click "Add Note" to create your first note</p>
+                </div>
+            </section>
+        </main>
+        
+        
+        <div id="note-modal" class="modal" role="dialog" aria-labelledby="modal-title" aria-modal="true">
+            <div class="modal-content">
+                <span class="close" id="close-modal" aria-label="Close modal">&times;</span>
+                <h2 id="modal-title">Add New Note</h2>
+                <form id="note-form">
+                    <div class="form-group">
+                        <label for="note-title">Title</label>
+                        <input type="text" id="note-title" required maxlength="100">
+                    </div>
+                    <div class="form-group">
+                        <label for="note-content">Content</label>
+                        <textarea id="note-content" placeholder="Write your note here..." required maxlength="10000"></textarea>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" id="cancel-btn">Cancel</button>
+                        <button type="submit" class="btn" id="save-btn">Save Note</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="js/theme.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About VNotes - Simple & Elegant Note Taking App</title>
+    <meta name="description" content="Learn about VNotes, a minimalist note-taking web application with dark/light themes, built for simplicity and productivity.">
+    <meta name="keywords" content="about vnotes, note-taking app, productivity, features">
+    <meta name="author" content="VNotes">
+    <meta property="og:title" content="About VNotes - Simple & Elegant Note Taking App">
+    <meta property="og:description" content="Learn about VNotes, a minimalist note-taking web application with dark/light themes.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://yourusername.github.io/vnotes/about.html">
+    <meta property="og:image" content="https://yourusername.github.io/vnotes/assets/notes.png">
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="app">
+        <header class="header">
+            <a href="index.html">
+                <img src="assets/notes.png" alt="VNotes logo" class="notes-image">
+            </a>
+            <nav class="navigation">
+                <a href="index.html" class="navigation-link">Home</a>
+                <a href="about.html" class="navigation-link">About</a>
+                <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme" role="switch"></button>
+            </nav>
+        </header>
+        <main class="main">
+            <section class="hero">
+                <p class="hero-title">
+                    About VNotes
+                </p>
+            </section>
+            
+            <section class="about-content">
+                <div style="max-width: 800px; margin: 0 auto; text-align: center;">
+                    <h2 style="margin-bottom: 2rem; color: var(--text-primary);">Simple. Clean. Effective.</h2>
+                    
+                    <div style="text-align: left; margin-bottom: 2rem;">
+                        <p style="margin-bottom: 1.5rem; font-size: 1.1rem; line-height: 1.6; color: var(--text-secondary);">
+                            VNotes is a minimalist note-taking web application designed with simplicity and ease of use in mind. 
+                            Whether you're jotting down quick thoughts, planning your day, or saving important information, 
+                            VNotes provides a clean, distraction-free environment for all your note-taking needs.
+                        </p>
+                        
+                        <h3 style="margin-bottom: 1rem; color: var(--text-primary);">Features:</h3>
+                        <ul style="margin-bottom: 2rem; padding-left: 2rem; color: var(--text-secondary);">
+                            <li style="margin-bottom: 0.5rem;">Create, edit, and delete notes effortlessly</li>
+                            <li style="margin-bottom: 0.5rem;">Automatic local storage - your notes are saved locally in your browser</li>
+                            <li style="margin-bottom: 0.5rem;">Responsive design that works on all devices</li>
+                            <li style="margin-bottom: 0.5rem;">Clean, minimalist interface with no distractions</li>
+                            <li style="margin-bottom: 0.5rem;">Fast and lightweight - no server required</li>
+                            <li style="margin-bottom: 0.5rem;">Dark/Light theme toggle</li>
+                            <li style="margin-bottom: 0.5rem;">Security features including XSS protection and input validation</li>
+                            <li style="margin-bottom: 0.5rem;">Accessibility compliant with ARIA support</li>
+                        </ul>
+                        
+                        <h3 style="margin-bottom: 1rem; color: var(--text-primary);">How to use:</h3>
+                        <ol style="margin-bottom: 2rem; padding-left: 2rem; color: var(--text-secondary);">
+                            <li style="margin-bottom: 0.5rem;">Click "Add Note" to create a new note</li>
+                            <li style="margin-bottom: 0.5rem;">Fill in the title and content</li>
+                            <li style="margin-bottom: 0.5rem;">Click "Save Note" to store your note</li>
+                            <li style="margin-bottom: 0.5rem;">Use "Edit" to modify existing notes</li>
+                            <li style="margin-bottom: 0.5rem;">Use "Delete" to remove notes you no longer need</li>
+                            <li style="margin-bottom: 0.5rem;">Toggle between dark and light themes using the switch in the header</li>
+                        </ol>
+
+                        <h3 style="margin-bottom: 1rem; color: var(--text-primary);">Technical Features:</h3>
+                        <ul style="margin-bottom: 2rem; padding-left: 2rem; color: var(--text-secondary);">
+                            <li style="margin-bottom: 0.5rem;">Built with vanilla JavaScript for maximum performance</li>
+                            <li style="margin-bottom: 0.5rem;">CSS custom properties for seamless theming</li>
+                            <li style="margin-bottom: 0.5rem;">Progressive Web App features</li>
+                            <li style="margin-bottom: 0.5rem;">Local storage with data validation</li>
+                            <li style="margin-bottom: 0.5rem;">Rate limiting to prevent abuse</li>
+                            <li style="margin-bottom: 0.5rem;">Modern CSS with smooth animations</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: var(--bg-secondary); padding: 2rem; border-radius: 8px; margin-top: 2rem; border: 1px solid var(--border-color);">
+                        <p style="color: var(--text-secondary); margin: 0; font-style: italic;">
+                            "The best note-taking app is the one you'll actually use. VNotes focuses on what matters most - 
+                            capturing your thoughts quickly and efficiently."
+                        </p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="js/theme.js"></script>
+</body>
+</html>
