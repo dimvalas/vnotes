@@ -17,7 +17,7 @@ A minimalist, secure note-taking web application with dark/light themes built fo
 
 ## Live Demo
 
-Visit the live application: [VNotes](https://yourusername.github.io/vnotes/)
+Visit the live application: [VNotes](https://dimvalas.github.io/vnotes/)
 
 ## Technologies Used
 
@@ -47,7 +47,7 @@ vnotes/
 ##  Getting Started
 
 ### Option 1: Use Online
-Simply visit the [live demo](https://yourusername.github.io/vnotes/)
+Simply visit the [live demo](https://dimvalas.github.io/vnotes/)
 
 ### Option 2: Run Locally
 1. Clone the repository:
