@@ -1,32 +1,73 @@
 
+// Theme Toggle
+class ThemeManager {
+    constructor() {
+        this.theme = localStorage.getItem('theme') || 'light';
+        this.init();
+    }
+
+    init() {
+        this.applyTheme();
+        this.bindEvents();
+    }
+
+    applyTheme() {
+        document.documentElement.setAttribute('data-theme', this.theme);
+        const toggle = document.getElementById('theme-toggle');
+        if (toggle) {
+            toggle.textContent = this.theme === 'dark' ? '☀️' : '🌙';
+        }
+    }
+
+    toggleTheme() {
+        this.theme = this.theme === 'light' ? 'dark' : 'light';
+        localStorage.setItem('theme', this.theme);
+        this.applyTheme();
+    }
+
+    bindEvents() {
+        const toggle = document.getElementById('theme-toggle');
+        if (toggle) {
+            toggle.addEventListener('click', () => this.toggleTheme());
+        }
+    }
+}
+
+// Notes App
 class NotesApp {
     constructor() {
         this.notes = this.loadNotes();
         this.currentNoteId = null;
         this.lastAction = 0;
-        this.actionLimit = 300;
+        this.actionLimit = 100; // Reduced from 300ms to 100ms
         this.maxNotes = 100;
         this.maxTitleLength = 100;
         this.maxContentLength = 10000;
         this.init();
     }
 
-
     loadNotes() {
         try {
-            const stored = localStorage.getItem('notes');
-            if (!stored) return [];
+            const stored = localStorage.getItem('vnotes-data');
+            if (!stored) {
+                console.log('No stored notes found, starting fresh');
+                return [];
+            }
             
             const notes = JSON.parse(stored);
-            if (!Array.isArray(notes)) return [];
+            if (!Array.isArray(notes)) {
+                console.log('Invalid notes format, starting fresh');
+                return [];
+            }
             
-            return notes.filter(note => this.validateNote(note));
+            const validNotes = notes.filter(note => this.validateNote(note));
+            console.log(`Loaded ${validNotes.length} valid notes`);
+            return validNotes;
         } catch (error) {
             console.error('Error loading notes:', error);
             return [];
         }
     }
-
 
     validateNote(note) {
         return (
@@ -45,50 +86,31 @@ class NotesApp {
     checkRateLimit() {
         const now = Date.now();
         if (now - this.lastAction < this.actionLimit) {
-            this.showError('Please wait before performing another action');
+            this.showNotification('Please wait before performing another action', 'error');
             return false;
         }
         this.lastAction = now;
         return true;
     }
 
-
-    sanitizeInput(input) {
-        if (typeof input !== 'string') return '';
-        
-        return input
-            .replace(/[<>&"']/g, (char) => {
-                const entities = {
-                    '<': '&lt;',
-                    '>': '&gt;',
-                    '&': '&amp;',
-                    '"': '&quot;',
-                    "'": '&#39;'
-                };
-                return entities[char];
-            })
-            .trim();
-    }
-
-
     validateInput(title, content) {
-        if (!title || title.length === 0) {
-            this.showError('Title is required');
+        if (!title || title.trim().length === 0) {
+            this.showNotification('Title is required', 'error');
             return false;
         }
         
-        if (!content || content.length === 0) {
-            this.showError('Content is required');
+        if (!content || content.trim().length === 0) {
+            this.showNotification('Content is required', 'error');
             return false;
         }
         
         if (title.length > this.maxTitleLength) {
-            this.showError(`Title must be ${this.maxTitleLength} characters or less`);
+            this.showNotification(`Title must be ${this.maxTitleLength} characters or less`, 'error');
             return false;
         }
         
         if (content.length > this.maxContentLength) {
-            this.showError(`Content must be ${this.maxContentLength} characters or less`);
+            this.showNotification(`Content must be ${this.maxContentLength} characters or less`, 'error');
             return false;
         }
         
@@ -97,52 +119,43 @@ class NotesApp {
 
     checkNotesLimit() {
         if (this.notes.length >= this.maxNotes) {
-            this.showError(`Maximum ${this.maxNotes} notes allowed`);
+            this.showNotification(`Maximum ${this.maxNotes} notes allowed`, 'error');
             return false;
         }
         return true;
     }
 
+    showNotification(message, type = 'success') {
+        // Remove existing notifications
+        const existing = document.querySelectorAll('.notification');
+        existing.forEach(el => el.remove());
 
-    showError(message) {
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'error-message';
-        errorDiv.textContent = message;
-        errorDiv.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #dc3545;
-            color: white;
-            padding: 1rem 1.5rem;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
-            z-index: 10000;
-            animation: slideInRight 0.3s ease-out;
-        `;
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.textContent = message;
         
-        document.body.appendChild(errorDiv);
+        document.body.appendChild(notification);
         
         setTimeout(() => {
-            errorDiv.style.animation = 'slideOutRight 0.3s ease-out';
+            notification.style.animation = 'slideOutRight 0.3s ease-out';
             setTimeout(() => {
-                if (errorDiv.parentNode) {
-                    errorDiv.parentNode.removeChild(errorDiv);
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
                 }
             }, 300);
-        }, 3000);
+        }, type === 'error' ? 4000 : 2000);
     }
 
     init() {
         this.bindEvents();
         this.render();
+        console.log('NotesApp initialized with', this.notes.length, 'notes');
     }
 
     bindEvents() {
         document.getElementById('add-note-btn').addEventListener('click', () => {
             this.openModal();
         });
-
 
         document.getElementById('close-modal').addEventListener('click', () => {
             this.closeModal();
@@ -152,19 +165,16 @@ class NotesApp {
             this.closeModal();
         });
 
-
         document.getElementById('note-modal').addEventListener('click', (e) => {
             if (e.target.id === 'note-modal') {
                 this.closeModal();
             }
         });
 
-
         document.getElementById('note-form').addEventListener('submit', (e) => {
             e.preventDefault();
             this.saveNote();
         });
-
 
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && document.getElementById('note-modal').style.display === 'block') {
@@ -184,7 +194,7 @@ class NotesApp {
         if (noteId) {
             const note = this.notes.find(n => n.id === noteId);
             if (!note) {
-                this.showError('Note not found');
+                this.showNotification('Note not found', 'error');
                 return;
             }
             modalTitle.textContent = 'Edit Note';
@@ -199,7 +209,7 @@ class NotesApp {
         }
 
         modal.style.display = 'block';
-        noteTitle.focus();
+        setTimeout(() => noteTitle.focus(), 100);
     }
 
     closeModal() {
@@ -215,56 +225,53 @@ class NotesApp {
 
         if (!this.validateInput(title, content)) return;
         
-
         if (!this.currentNoteId && !this.checkNotesLimit()) return;
-
-
-        const cleanTitle = title;
-        const cleanContent = content;
 
         try {
             if (this.currentNoteId) {
                 const noteIndex = this.notes.findIndex(n => n.id === this.currentNoteId);
                 if (noteIndex === -1) {
-                    this.showError('Note not found');
+                    this.showNotification('Note not found', 'error');
                     return;
                 }
                 
                 this.notes[noteIndex] = {
                     ...this.notes[noteIndex],
-                    title: cleanTitle,
-                    content: cleanContent,
+                    title: title,
+                    content: content,
                     updatedAt: new Date().toISOString()
                 };
+                console.log('Note updated:', this.notes[noteIndex]);
             } else {
                 const newNote = {
                     id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-                    title: cleanTitle,
-                    content: cleanContent,
+                    title: title,
+                    content: content,
                     createdAt: new Date().toISOString(),
                     updatedAt: new Date().toISOString()
                 };
                 this.notes.unshift(newNote);
+                console.log('New note created:', newNote);
             }
 
-            const isEdit = !!this.currentNoteId;
-            this.saveToLocalStorage();
-            this.render();
-            this.closeModal();
-            this.showSuccess(isEdit ? 'Note updated successfully' : 'Note created successfully');
+            const saveResult = this.saveToStorage();
+            if (saveResult) {
+                const isEdit = !!this.currentNoteId;
+                this.render();
+                this.closeModal();
+                this.showNotification(isEdit ? 'Note updated successfully' : 'Note created successfully');
+            }
         } catch (error) {
             console.error('Error saving note:', error);
-            this.showError('Failed to save note');
+            this.showNotification('Failed to save note', 'error');
         }
     }
 
     deleteNote(noteId) {
-
         if (!this.checkRateLimit()) return;
         
-
         if (!noteId || typeof noteId !== 'string') {
-            this.showError('Invalid note ID');
+            this.showNotification('Invalid note ID', 'error');
             return;
         }
 
@@ -274,57 +281,42 @@ class NotesApp {
                 this.notes = this.notes.filter(note => note.id !== noteId);
                 
                 if (this.notes.length === originalLength) {
-                    this.showError('Note not found');
+                    this.showNotification('Note not found', 'error');
                     return;
                 }
                 
-                this.saveToLocalStorage();
-                this.render();
-                this.showSuccess('Note deleted successfully');
+                console.log('Note deleted, remaining notes:', this.notes.length);
+                
+                const saveResult = this.saveToStorage();
+                if (saveResult) {
+                    this.render();
+                    this.showNotification('Note deleted successfully');
+                }
             } catch (error) {
                 console.error('Error deleting note:', error);
-                this.showError('Failed to delete note');
+                this.showNotification('Failed to delete note', 'error');
             }
         }
     }
 
-    saveToLocalStorage() {
+    saveToStorage() {
         try {
-            localStorage.setItem('notes', JSON.stringify(this.notes));
+            const dataToSave = JSON.stringify(this.notes);
+            localStorage.setItem('vnotes-data', dataToSave);
+            console.log('Notes saved to localStorage, count:', this.notes.length);
+            
+            // Verify the save worked
+            const verification = localStorage.getItem('vnotes-data');
+            if (verification !== dataToSave) {
+                throw new Error('Data verification failed after save');
+            }
+            
+            return true;
         } catch (error) {
             console.error('Error saving to localStorage:', error);
-            this.showError('Failed to save notes');
+            this.showNotification('Failed to save notes - storage may be full', 'error');
+            return false;
         }
-    }
-
-
-    showSuccess(message) {
-        const successDiv = document.createElement('div');
-        successDiv.className = 'success-message';
-        successDiv.textContent = message;
-        successDiv.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #28a745;
-            color: white;
-            padding: 1rem 1.5rem;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
-            z-index: 10000;
-            animation: slideInRight 0.3s ease-out;
-        `;
-        
-        document.body.appendChild(successDiv);
-        
-        setTimeout(() => {
-            successDiv.style.animation = 'slideOutRight 0.3s ease-out';
-            setTimeout(() => {
-                if (successDiv.parentNode) {
-                    successDiv.parentNode.removeChild(successDiv);
-                }
-            }, 300);
-        }, 2000);
     }
 
     formatDate(dateString) {
@@ -341,6 +333,13 @@ class NotesApp {
     truncateContent(content, maxLength = 150) {
         if (content.length <= maxLength) return content;
         return content.substring(0, maxLength) + '...';
+    }
+
+    escapeHtml(text) {
+        if (typeof text !== 'string') return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
     }
 
     render() {
@@ -363,42 +362,20 @@ class NotesApp {
                     ${note.updatedAt !== note.createdAt ? 'Updated' : 'Created'}: ${this.formatDate(note.updatedAt)}
                 </div>
                 <div class="note-actions">
-                    <button class="btn btn-small btn-secondary" data-action="edit" data-note-id="${this.escapeHtml(note.id)}">
+                    <button class="btn btn-small btn-secondary" onclick="window.app.openModal('${note.id}')">
                         Edit
                     </button>
-                    <button class="btn btn-small btn-danger" data-action="delete" data-note-id="${this.escapeHtml(note.id)}">
+                    <button class="btn btn-small btn-danger" onclick="window.app.deleteNote('${note.id}')">
                         Delete
                     </button>
                 </div>
             </div>
         `).join('');
-
-
-        notesGrid.addEventListener('click', (e) => {
-            const button = e.target.closest('[data-action]');
-            if (!button) return;
-            
-            const action = button.dataset.action;
-            const noteId = button.dataset.noteId;
-            
-            if (action === 'edit') {
-                this.openModal(noteId);
-            } else if (action === 'delete') {
-                this.deleteNote(noteId);
-            }
-        });
-    }
-
-    escapeHtml(text) {
-        if (typeof text !== 'string') return '';
-        
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
     }
 }
 
-
+// Initialize the app
 document.addEventListener('DOMContentLoaded', () => {
+    window.themeManager = new ThemeManager();
     window.app = new NotesApp();
 });
